@@ -1,0 +1,18 @@
+name: Update remote site
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get SSH Key & set permessions
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/toukan && chmod ~/.ssh/toukan
+      - name: git pull
+        run: ssh -i ~/.ssh/toukan ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORKING_DIR }} && git pull"
