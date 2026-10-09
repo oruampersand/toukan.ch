@@ -9,10 +9,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Get SSH Key & set permessions
+      - uses: actions/checkout@v4
+      - name: Get SSH Key & set permissions
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/toukan && chmod ~/.ssh/toukan
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/toukan
+          chmod 600 ~/.ssh/toukan
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
       - name: git pull
         run: ssh -i ~/.ssh/toukan ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORKING_DIR }} && git pull"
